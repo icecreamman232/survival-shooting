@@ -11,15 +11,31 @@ namespace SGGames.Script.Entities
         [Header("Movement")]
         [SerializeField] private float m_movespeed;
         [SerializeField] private Vector2 m_moveDirection;
+        [SerializeField] private float m_raycastDistance;
+        [SerializeField] private LayerMask m_obstacleLayer;
 
         private PlayerAnimationController m_playerAnimationController;
         private InputAction m_moveAction;
+        private BoxCollider2D m_boxCollider2D;
+        private Vector2 m_topLeft;
+        private Vector2 m_topRight;
+        private Vector2 m_botLeft;
+        private Vector2 m_botRight;
+
+        private RaycastHit2D m_raycastHit2D;
+        
         public Action<bool> OnFlipping;
         
         private void Start()
         {
+            m_boxCollider2D = GetComponent<BoxCollider2D>();
             m_playerAnimationController = GetComponent<PlayerAnimationController>();
             m_moveAction = InputSystem.actions.FindAction("Move");
+            
+            m_topLeft = new Vector2(m_boxCollider2D.bounds.min.x, m_boxCollider2D.bounds.max.y);
+            m_topRight = new Vector2(m_boxCollider2D.bounds.max.x, m_boxCollider2D.bounds.max.y);
+            m_botLeft = new Vector2(m_boxCollider2D.bounds.min.x, m_boxCollider2D.bounds.min.y);
+            m_botRight = new Vector2(m_boxCollider2D.bounds.max.x, m_boxCollider2D.bounds.min.y);
         }
 
         private void Update()
@@ -27,6 +43,7 @@ namespace SGGames.Script.Entities
             if (!m_isActive) return;
 
             HandleInput();
+            UpdateCollision();
             UpdateMovement();
             UpdateAnimation();
         }
@@ -39,6 +56,18 @@ namespace SGGames.Script.Entities
         private void UpdateMovement()
         {
             transform.Translate(m_moveDirection * (m_movespeed * Time.deltaTime));
+        }
+
+        private void UpdateCollision()
+        {
+            if (m_moveDirection == Vector2.zero) return;
+            
+            m_raycastHit2D = Physics2D.BoxCast(transform.position,m_boxCollider2D.size,0,m_moveDirection,m_raycastDistance,m_obstacleLayer);
+
+            if (m_raycastHit2D.collider != null)
+            {
+                m_moveDirection = Vector2.zero;
+            }
         }
 
         private void UpdateAnimation()
