@@ -1,4 +1,5 @@
 using System;
+using SGGames.Script.Animations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,20 +11,15 @@ namespace SGGames.Script.Entities
         [Header("Movement")]
         [SerializeField] private float m_movespeed;
         [SerializeField] private Vector2 m_moveDirection;
-        
-        private InputAction m_moveAction;
-        private Animator m_animator;
-        private SpriteRenderer m_spriteRenderer;
-        
-        private static readonly int IsRunning = Animator.StringToHash("Is_Running");
 
+        private PlayerAnimationController m_playerAnimationController;
+        private InputAction m_moveAction;
         public Action<bool> OnFlipping;
         
         private void Start()
         {
+            m_playerAnimationController = GetComponent<PlayerAnimationController>();
             m_moveAction = InputSystem.actions.FindAction("Move");
-            m_animator = GetComponentInChildren<Animator>();
-            m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
         private void Update()
@@ -47,9 +43,8 @@ namespace SGGames.Script.Entities
 
         private void UpdateAnimation()
         {
-            m_spriteRenderer.flipX = m_moveDirection.x < 0;
             OnFlipping?.Invoke(m_moveDirection.x < 0);
-            m_animator.SetBool(IsRunning,m_moveDirection != Vector2.zero);
+            m_playerAnimationController.OnRunningAnim?.Invoke(m_moveDirection != Vector2.zero);
         }
     }
 }
