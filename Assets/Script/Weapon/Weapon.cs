@@ -11,6 +11,7 @@ namespace SGGames.Script.Weapons
         [SerializeField] private ObjectPooler m_bulletPooler;
         [SerializeField] private Transform m_shootPivot;
         [SerializeField] private float m_delayBetweenTwoShots;
+        [SerializeField] private Vector2 m_shootPivotFlipValue;
 
         private bool m_canShot;
         private WaitForSeconds DelayAfterShot;
@@ -51,6 +52,9 @@ namespace SGGames.Script.Weapons
         public void FlipWeapon(bool isFlipped)
         {
             m_model.flipX = isFlipped;
+            var curPos = m_shootPivot.localPosition;
+            curPos.x = isFlipped ? m_shootPivotFlipValue.x : -m_shootPivotFlipValue.x;
+            m_shootPivot.localPosition = curPos;
         }
     }
 }
