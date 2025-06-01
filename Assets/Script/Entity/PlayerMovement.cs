@@ -17,11 +17,6 @@ namespace SGGames.Script.Entities
         private PlayerAnimationController m_playerAnimationController;
         private InputAction m_moveAction;
         private BoxCollider2D m_boxCollider2D;
-        private Vector2 m_topLeft;
-        private Vector2 m_topRight;
-        private Vector2 m_botLeft;
-        private Vector2 m_botRight;
-
         private RaycastHit2D m_raycastHit2D;
         
         public Action<bool> OnFlipping;
@@ -31,11 +26,6 @@ namespace SGGames.Script.Entities
             m_boxCollider2D = GetComponent<BoxCollider2D>();
             m_playerAnimationController = GetComponent<PlayerAnimationController>();
             m_moveAction = InputSystem.actions.FindAction("Move");
-            
-            m_topLeft = new Vector2(m_boxCollider2D.bounds.min.x, m_boxCollider2D.bounds.max.y);
-            m_topRight = new Vector2(m_boxCollider2D.bounds.max.x, m_boxCollider2D.bounds.max.y);
-            m_botLeft = new Vector2(m_boxCollider2D.bounds.min.x, m_boxCollider2D.bounds.min.y);
-            m_botRight = new Vector2(m_boxCollider2D.bounds.max.x, m_boxCollider2D.bounds.min.y);
         }
 
         private void Update()
